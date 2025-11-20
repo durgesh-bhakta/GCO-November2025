@@ -1,0 +1,55 @@
+public class Problem3 {
+    int[][] grid = new int[6][6];
+    boolean[] used = new boolean[37];
+    
+    boolean isValid(int row, int col, int val) {
+        int[] dr = {-1,1,0,0};
+        int[] dc = {0,0,-1,1};
+        for (int i = 0; i < 4; i++) {
+            int nr = row + dr[i], nc = col + dc[i];
+            if (nr >= 0 && nr < 6 && nc >= 0 && nc < 6 && grid[nr][nc] != 0) {
+                if (Math.abs(grid[nr][nc] - val) == 1) return false;
+            }
+        }
+        if (val == 1 || val == 12 || val == 24 || val == 36) {
+            for (int i = 0; i < 6; i++) {
+                if (grid[row][i] != 0 && (grid[row][i] == 1 || grid[row][i] == 12 || grid[row][i] == 24 || grid[row][i] == 36)) return false;
+                if (grid[i][col] != 0 && (grid[i][col] == 1 || grid[i][col] == 12 || grid[i][col] == 24 || grid[i][col] == 36)) return false;
+            }
+        }
+        return true;
+    }
+    
+    boolean solve(int pos) {
+        if (pos == 36) return true;
+        int row = pos / 6, col = pos % 6;
+        if (row == 0 && col == 0) {
+            grid[0][0] = 1; used[1] = true;
+            return solve(1);
+        }
+        for (int val = 1; val <= 36; val++) {
+            if (!used[val] && isValid(row, col, val)) {
+                grid[row][col] = val; used[val] = true;
+                if (solve(pos + 1)) return true;
+                used[val] = false; grid[row][col] = 0;
+            }
+        }
+        return false;
+    }
+    
+    public static void main(String[] args) {
+        Problem3 p = new Problem3();
+        if (p.solve(0)) {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 6; i++) {
+                for (int j = 0; j < 6; j++) {
+                    sb.append(p.grid[i][j]);
+                    if (i != 5 || j != 5) sb.append(",");
+                }
+            }
+            System.out.println(sb.toString());
+        } else {
+            System.out.println("No solution");
+        }
+    }
+}
