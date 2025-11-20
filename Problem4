@@ -1,0 +1,46 @@
+public class Problem4 {
+    int[][] grid = new int[5][5];
+    boolean[] used = new boolean[26];
+    long solutionCount = 0;
+    
+    boolean isValid(int row, int col, int val) {
+        if (row > 0 && grid[row-1][col] != 0 && Math.abs(grid[row-1][col] - val) == 1) return false;
+        if (col > 0 && grid[row][col-1] != 0 && Math.abs(grid[row][col-1] - val) == 1) return false;
+        if (row < 4 && grid[row+1][col] != 0 && Math.abs(grid[row+1][col] - val) == 1) return false;
+        if (col < 4 && grid[row][col+1] != 0 && Math.abs(grid[row][col+1] - val) == 1) return false;
+        return true;
+    }
+    
+    void solve(int pos) {
+        if (pos == 25) {
+            solutionCount++;
+            if (solutionCount % 10000000 == 0) {
+                System.out.println("Progress: " + (solutionCount/1000000) + "M solutions...");
+            }
+            return;
+        }
+        
+        int row = pos / 5, col = pos % 5;
+        
+        for (int val = 1; val <= 25; val++) {
+            if (!used[val] && isValid(row, col, val)) {
+                grid[row][col] = val;
+                used[val] = true;
+                solve(pos + 1);
+                used[val] = false;
+                grid[row][col] = 0;
+            }
+        }
+    }
+    
+    public static void main(String[] args) {
+        Problem4 p = new Problem4();
+        System.out.println("Counting all 5x5 solutions with C1 only...");
+        System.out.println("WARNING: This will take many hours!");
+        long startTime = System.currentTimeMillis();
+        p.solve(0);
+        long endTime = System.currentTimeMillis();
+        System.out.println("\nTotal solutions: " + p.solutionCount);
+        System.out.println("Time: " + (endTime - startTime) / 1000.0 + " seconds");
+    }
+}
